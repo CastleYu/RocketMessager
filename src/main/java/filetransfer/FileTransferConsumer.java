@@ -15,16 +15,16 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.util.Collections;
 
-public class fileTranslateConsumer {
-    private static final Logger logger = LoggerFactory.getLogger(groupDiscussConsumer.class);
+public class FileTransferConsumer {
+    private static final Logger logger = LoggerFactory.getLogger(GroupChatConsumer.class);
 
-    private fileTranslateConsumer() {
+    private FileTransferConsumer() {
     }
 
     public static void main(String[] args) throws ClientException, IOException, InterruptedException {
         final ClientServiceProvider provider = ClientServiceProvider.loadService();
         // 接入点地址，需要设置成Proxy的地址和端口列表，一般是xxx:8081;xxx:8081。
-        String endpoints = "192.168.195.136:8081";
+        String endpoints = Constants.SERVER_ADDRESS_PORT;
         ClientConfiguration clientConfiguration = ClientConfiguration.newBuilder()
                 .setEndpoints(endpoints)
                 .build();
