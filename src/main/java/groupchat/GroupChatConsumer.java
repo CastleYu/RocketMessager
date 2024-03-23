@@ -14,6 +14,11 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.util.Collections;
 
+/**
+ * 接收消息（群聊）
+ * 消费者
+ */
+
 public class GroupChatConsumer {
     private static final Logger logger = LoggerFactory.getLogger(GroupChatConsumer.class);
 

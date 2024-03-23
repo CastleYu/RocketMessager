@@ -11,8 +11,9 @@ import org.apache.rocketmq.client.apis.producer.SendReceipt;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/***
- * 使用普通消息
+/**
+ * 发送消息（普通点对点）
+ * 生产者
  */
 
 

@@ -19,6 +19,11 @@ import org.slf4j.LoggerFactory;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * 用于示例消息体结构的样本
+ */
+
+
 public class MessageExample {
     private static final Logger logger = LoggerFactory.getLogger(MessageExample.class);
 

@@ -15,6 +15,10 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.util.Collections;
 
+/**
+ * 用于示例Push式消费者结构的样本
+ */
+
 public class PushConsumerExample {
     private static final Logger logger = LoggerFactory.getLogger(GroupChatConsumer.class);
 

@@ -11,6 +11,10 @@ import org.apache.rocketmq.client.apis.producer.SendReceipt;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * 用于示例生产者结构的样本
+ */
+
 public class ProducerExample {
     private static final Logger logger = LoggerFactory.getLogger(ProducerExample.class);
 

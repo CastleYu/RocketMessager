@@ -15,6 +15,11 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.util.Collections;
 
+/**
+ * 接收消息（普通点对点）
+ * 消费者
+ */
+
 public class MessageConsumer {
     private static final Logger logger = LoggerFactory.getLogger(MessageConsumer.class);
 
