@@ -1,3 +1,7 @@
+package filetransfer;
+
+import constants.Constants;
+import groupchat.GroupChatConsumer;
 import org.apache.rocketmq.client.apis.ClientConfiguration;
 import org.apache.rocketmq.client.apis.ClientException;
 import org.apache.rocketmq.client.apis.ClientServiceProvider;

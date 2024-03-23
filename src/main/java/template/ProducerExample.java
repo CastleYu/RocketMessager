@@ -1,3 +1,6 @@
+package template;
+
+import constants.Constants;
 import org.apache.rocketmq.client.apis.ClientConfiguration;
 import org.apache.rocketmq.client.apis.ClientConfigurationBuilder;
 import org.apache.rocketmq.client.apis.ClientException;
@@ -8,13 +11,12 @@ import org.apache.rocketmq.client.apis.producer.SendReceipt;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class fileTranslateProducer {
+public class ProducerExample {
     private static final Logger logger = LoggerFactory.getLogger(ProducerExample.class);
 
     public static void main(String[] args) throws ClientException {
         // 接入点地址，需要设置成Proxy的地址和端口列表，一般是xxx:8081;xxx:8081。
-//        这里将broker和nameserver放在192.168.195.136:8081，并统一消息发送过去
-        String endpoint = "192.168.195.136:8081";
+        String endpoint = Constants.SERVER_ADDRESS_PORT;
         // 消息发送的目标Topic名称，需要提前创建。
         String topic = "TestTopic";
         ClientServiceProvider provider = ClientServiceProvider.loadService();

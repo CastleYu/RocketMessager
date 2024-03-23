@@ -1,3 +1,7 @@
+package groupchat;
+
+import constants.Constants;
+import template.ProducerExample;
 import org.apache.rocketmq.client.apis.ClientConfiguration;
 import org.apache.rocketmq.client.apis.ClientConfigurationBuilder;
 import org.apache.rocketmq.client.apis.ClientException;
@@ -13,13 +17,13 @@ import org.slf4j.LoggerFactory;
  * 进行群聊的设置
  * 使用订阅机制，应该要群发进行获得内容
  */
-public class groupDiscussProducer {
+public class GroupChatProducer {
     private static final Logger logger = LoggerFactory.getLogger(ProducerExample.class);
 
     public static void main(String[] args) throws ClientException {
         // 接入点地址，需要设置成Proxy的地址和端口列表，一般是xxx:8081;xxx:8081。
         // 都把消息发给192.168.195.136:8081
-        String endpoint = "106.53.180.137:8081";
+        String endpoint = Constants.SERVER_ADDRESS_PORT;
         // 消息发送的目标Topic名称，需要提前创建。
         String topic = "GroupDiscussion";
         ClientServiceProvider provider = ClientServiceProvider.loadService();

@@ -1,3 +1,6 @@
+package message;
+
+import constants.Constants;
 import org.apache.rocketmq.client.apis.ClientConfiguration;
 import org.apache.rocketmq.client.apis.ClientConfigurationBuilder;
 import org.apache.rocketmq.client.apis.ClientException;
@@ -13,12 +16,12 @@ import org.slf4j.LoggerFactory;
  */
 
 
-public class oneByOneProducer {
-    private static final Logger logger = LoggerFactory.getLogger(ProducerExample.class);
+public class MessageProducer {
+    private static final Logger logger = LoggerFactory.getLogger(MessageProducer.class);
 
     public static void main(String[] args) throws ClientException {
         // 接入点地址，需要设置成Proxy的地址和端口列表，一般是xxx:8081;xxx:8081。
-        String endpoint = "192.168.195.136:8081";
+        String endpoint = Constants.SERVER_ADDRESS_PORT;
         // 消息发送的目标Topic名称，需要提前创建。
         String topic = "TalkToOne";
         ClientServiceProvider provider = ClientServiceProvider.loadService();

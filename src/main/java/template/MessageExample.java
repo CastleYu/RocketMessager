@@ -1,3 +1,6 @@
+package template;
+
+import constants.Constants;
 import org.apache.rocketmq.client.apis.ClientConfiguration;
 import org.apache.rocketmq.client.apis.ClientException;
 import org.apache.rocketmq.client.apis.ClientServiceProvider;
@@ -17,7 +20,7 @@ import java.util.Collections;
 import java.util.List;
 
 public class MessageExample {
-    private static final Logger logger = LoggerFactory.getLogger(groupDiscussConsumer.class);
+    private static final Logger logger = LoggerFactory.getLogger(MessageExample.class);
 
     public static void main(String[] args) throws MQClientException, ClientException {
         // 1. 创建消费者
@@ -26,8 +29,8 @@ public class MessageExample {
         final ClientServiceProvider provider = ClientServiceProvider.loadService();
 
         // 2. 设置NameServer的地址
-        String endpoints = "106.53.180.137:9876";
-        consumer.setNamesrvAddr("106.53.180.137:9876");
+        String endpoints = Constants.SERVER_ADDRESS_PORT;
+        consumer.setNamesrvAddr(Constants.SERVER_ADDRESS_PORT);
         ClientConfiguration clientConfiguration = ClientConfiguration.newBuilder()
                 .setEndpoints(endpoints)
                 .build();
