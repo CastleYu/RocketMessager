@@ -19,7 +19,7 @@ public class groupDiscussConsumer {
     public static void main(String[] args) throws ClientException, IOException, InterruptedException {
         final ClientServiceProvider provider = ClientServiceProvider.loadService();
         // 接入点地址，需要设置成Proxy的地址和端口列表，一般是xxx:8081;xxx:8081。
-        String endpoints = "192.168.195.136:8081";
+        String endpoints = "106.53.180.137:8081";
         ClientConfiguration clientConfiguration = ClientConfiguration.newBuilder()
                 .setEndpoints(endpoints)
                 .build();

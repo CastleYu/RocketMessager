@@ -31,5 +31,15 @@
             <artifactId>logback-classic</artifactId>
             <version>1.2.3</version> <!-- 使用时请检查是否有更新的版本 -->
         </dependency>
+        <dependency>
+            <groupId>org.apache.rocketmq</groupId>
+            <artifactId>rocketmq-common</artifactId>
+            <version>4.8.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.rocketmq</groupId>
+            <artifactId>rocketmq-client</artifactId>
+            <version>4.8.0</version>
+        </dependency>
     </dependencies>
 </project>
