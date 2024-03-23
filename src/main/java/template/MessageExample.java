@@ -34,8 +34,8 @@ public class MessageExample {
         final ClientServiceProvider provider = ClientServiceProvider.loadService();
 
         // 2. 设置NameServer的地址
-        String endpoints = Constants.SERVER_ADDRESS_PORT;
-        consumer.setNamesrvAddr(Constants.SERVER_ADDRESS_PORT);
+        String endpoints = Constants.BROKER_ADDRESS_PORT;
+        consumer.setNamesrvAddr(Constants.NAME_SERVER_ADDRESS_PORT);
         ClientConfiguration clientConfiguration = ClientConfiguration.newBuilder()
                 .setEndpoints(endpoints)
                 .build();

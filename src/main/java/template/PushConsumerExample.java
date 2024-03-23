@@ -28,7 +28,7 @@ public class PushConsumerExample {
     public static void main(String[] args) throws ClientException, IOException, InterruptedException {
         final ClientServiceProvider provider = ClientServiceProvider.loadService();
         // 接入点地址，需要设置成Proxy的地址和端口列表，一般是xxx:8081;xxx:8081。
-        String endpoints = Constants.SERVER_ADDRESS_PORT;
+        String endpoints = Constants.BROKER_ADDRESS_PORT;
         ClientConfiguration clientConfiguration = ClientConfiguration.newBuilder()
                 .setEndpoints(endpoints)
                 .build();
