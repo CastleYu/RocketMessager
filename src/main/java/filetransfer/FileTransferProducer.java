@@ -1,51 +1,45 @@
 package filetransfer;
 
 import constants.Constants;
-import org.apache.rocketmq.client.apis.ClientConfiguration;
-import org.apache.rocketmq.client.apis.ClientConfigurationBuilder;
-import org.apache.rocketmq.client.apis.ClientException;
-import org.apache.rocketmq.client.apis.ClientServiceProvider;
-import org.apache.rocketmq.client.apis.message.Message;
-import org.apache.rocketmq.client.apis.producer.Producer;
-import org.apache.rocketmq.client.apis.producer.SendReceipt;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import template.ProducerExample;
+import org.apache.rocketmq.client.producer.DefaultMQProducer;
+import org.apache.rocketmq.common.message.Message;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 
 public class FileTransferProducer {
-    private static final Logger logger = LoggerFactory.getLogger(ProducerExample.class);
+    public static void main(String[] args) {
+        String topic = "file_transfer_topic";
+        String fileToSend = "TestFile.txt"; // Replace this with the path to your file
 
-    public static void main(String[] args) throws ClientException {
-        // 接入点地址，需要设置成Proxy的地址和端口列表，一般是xxx:8081;xxx:8081。
-//        这里将broker和nameserver放在192.168.195.136:8081，并统一消息发送过去
-        String endpoint = Constants.BROKER_ADDRESS_PORT;
-        // 消息发送的目标Topic名称，需要提前创建。
-        String topic = "TestTopic";
-        ClientServiceProvider provider = ClientServiceProvider.loadService();
-        ClientConfigurationBuilder builder = ClientConfiguration.newBuilder().setEndpoints(endpoint);
-        ClientConfiguration configuration = builder.build();
-        // 初始化Producer时需要设置通信配置以及预绑定的Topic。
-        Producer producer = provider.newProducerBuilder()
-                .setTopics(topic)
-                .setClientConfiguration(configuration)
-                .build();
-        // 普通消息发送。
-        Message message = provider.newMessageBuilder()
-                .setTopic(topic)
-                // 设置消息索引键，可根据关键字精确查找某条消息。
-                .setKeys("messageKey")
-                // 设置消息Tag，用于消费端根据指定Tag过滤消息。
-                .setTag("messageTag")
-                // 消息体。
-                .setBody("messageBody".getBytes())
-                .build();
+        // Send file
+        sendFile(topic, fileToSend);
+    }
+
+    public static void sendFile(String topic, String filePath) {
         try {
-            // 发送消息，需要关注发送结果，并捕获失败等异常。
-            SendReceipt sendReceipt = producer.send(message);
-            logger.info("Send message successfully, messageId={}", sendReceipt.getMessageId());
-        } catch (ClientException e) {
-            logger.error("Failed to send message", e);
+//            好像没有topic？
+            DefaultMQProducer producer = new DefaultMQProducer("file_transfer_producer_group");
+            producer.setNamesrvAddr(Constants.NAME_SERVER_ADDRESS_PORT);
+            producer.start();
+
+            File file = new File(filePath);
+            FileInputStream fileInputStream = new FileInputStream(file);
+            byte[] fileData = new byte[(int) file.length()];
+            fileInputStream.read(fileData);
+
+            Message message = new Message(topic, fileData);
+            message.setKeys(file.getName());
+            producer.send(message);
+
+            fileInputStream.close();
+            producer.shutdown();
+            System.out.println("File sent successfully.");
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        // producer.close();
     }
 }

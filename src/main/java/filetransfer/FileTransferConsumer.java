@@ -1,56 +1,51 @@
 package filetransfer;
 
 import constants.Constants;
-import groupchat.GroupChatConsumer;
 import org.apache.rocketmq.client.apis.ClientConfiguration;
-import org.apache.rocketmq.client.apis.ClientException;
-import org.apache.rocketmq.client.apis.ClientServiceProvider;
-import org.apache.rocketmq.client.apis.consumer.ConsumeResult;
-import org.apache.rocketmq.client.apis.consumer.FilterExpression;
-import org.apache.rocketmq.client.apis.consumer.FilterExpressionType;
-import org.apache.rocketmq.client.apis.consumer.PushConsumer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.rocketmq.client.consumer.DefaultMQPushConsumer;
+import org.apache.rocketmq.client.consumer.listener.ConsumeConcurrentlyStatus;
+import org.apache.rocketmq.client.consumer.listener.MessageListenerConcurrently;
+import org.apache.rocketmq.common.message.MessageExt;
 
-import java.io.IOException;
-import java.util.Collections;
+import java.io.FileOutputStream;
 
 public class FileTransferConsumer {
-    private static final Logger logger = LoggerFactory.getLogger(GroupChatConsumer.class);
 
-    private FileTransferConsumer() {
+    public static void main(String[] args) {
+        String topic = "file_transfer_topic";
+
+        // Receive file
+        receiveFile(topic);
     }
 
-    public static void main(String[] args) throws ClientException, IOException, InterruptedException {
-        final ClientServiceProvider provider = ClientServiceProvider.loadService();
-        // 接入点地址，需要设置成Proxy的地址和端口列表，一般是xxx:8081;xxx:8081。
-        String endpoints = Constants.BROKER_ADDRESS_PORT;
-        ClientConfiguration clientConfiguration = ClientConfiguration.newBuilder()
-                .setEndpoints(endpoints)
-                .build();
-        // 订阅消息的过滤规则，表示订阅所有Tag的消息。
-        String tag = "*";
-        FilterExpression filterExpression = new FilterExpression(tag, FilterExpressionType.TAG);
-        // 为消费者指定所属的消费者分组，Group需要提前创建。
-        String consumerGroup = "YourConsumerGroup";
-        // 指定需要订阅哪个目标Topic，Topic需要提前创建。
-        String topic = "TestTopic";
-        // 初始化PushConsumer，需要绑定消费者分组ConsumerGroup、通信参数以及订阅关系。
-        PushConsumer pushConsumer = provider.newPushConsumerBuilder()
-                .setClientConfiguration(clientConfiguration)
-                // 设置消费者分组。
-                .setConsumerGroup(consumerGroup)
-                // 设置预绑定的订阅关系。
-                .setSubscriptionExpressions(Collections.singletonMap(topic, filterExpression))
-                // 设置消费监听器。
-                .setMessageListener(messageView -> {
-                    // 处理消息并返回消费结果。
-                    logger.info("Consume message successfully, messageId={}", messageView.getMessageId());
-                    return ConsumeResult.SUCCESS;
-                })
-                .build();
-        Thread.sleep(Long.MAX_VALUE);
-        // 如果不需要再使用 PushConsumer，可关闭该实例。
-        // pushConsumer.close();
+    public static void receiveFile(String topic) {
+        try {
+            DefaultMQPushConsumer consumer = new DefaultMQPushConsumer("file_transfer_consumer_group");
+            String endpoints = Constants.BROKER_ADDRESS_PORT;
+            consumer.setNamesrvAddr(Constants.NAME_SERVER_ADDRESS_PORT);
+            ClientConfiguration clientConfiguration = ClientConfiguration.newBuilder()
+                    .setEndpoints(endpoints)
+                    .build();
+            consumer.subscribe(topic, "*");
+            consumer.registerMessageListener((MessageListenerConcurrently) (msgs, context) -> {
+                for (MessageExt msg : msgs) {
+                    try {
+                        String fileName = msg.getKeys()+"_re";
+                        byte[] fileData = msg.getBody();
+                        FileOutputStream fileOutputStream = new FileOutputStream(fileName);
+                        fileOutputStream.write(fileData);
+                        fileOutputStream.close();
+                        System.out.println("File received: " + fileName);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+                return ConsumeConcurrentlyStatus.CONSUME_SUCCESS;//标记已经成功消费消息
+            });
+            consumer.start();
+            System.out.println("Waiting for files...");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
