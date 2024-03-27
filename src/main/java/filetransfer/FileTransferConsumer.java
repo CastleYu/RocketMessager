@@ -20,6 +20,7 @@ public class FileTransferConsumer {
 
     public static void receiveFile(String topic) {
         try {
+            String endpoint = Constants.BROKER_ADDRESS_PORT;
             DefaultMQPushConsumer consumer = new DefaultMQPushConsumer("file_transfer_consumer_group");
             String endpoints = Constants.BROKER_ADDRESS_PORT;
             consumer.setNamesrvAddr(Constants.NAME_SERVER_ADDRESS_PORT);
@@ -30,7 +31,8 @@ public class FileTransferConsumer {
             consumer.registerMessageListener((MessageListenerConcurrently) (msgs, context) -> {
                 for (MessageExt msg : msgs) {
                     try {
-                        String fileName = msg.getKeys()+"_re";
+//                        存到src/main/java/filetransfer/
+                        String fileName = "src/main/java/filetransfer/"+"get_"+msg.getKeys();
                         byte[] fileData = msg.getBody();
                         FileOutputStream fileOutputStream = new FileOutputStream(fileName);
                         fileOutputStream.write(fileData);
