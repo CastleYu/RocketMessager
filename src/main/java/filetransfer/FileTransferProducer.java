@@ -12,12 +12,15 @@ import org.apache.rocketmq.client.producer.DefaultMQProducer;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.Scanner;
 
 public class FileTransferProducer {
     public static void main(String[] args) {
         String topic = "file_transfer_topic";
-        String fileToSend = "src/main/java/filetransfer/TestFile.txt"; // Replace this with the path to your file
-
+//        String fileToSend = "src/main/java/filetransfer/TestFile.txt"; // Replace this with the path to your file
+        System.out.println("输入要传送的文件地址：");
+        Scanner scanner = new Scanner(System.in);
+        String fileToSend = scanner.nextLine();
         // Send file
         sendFile(topic, fileToSend);
     }
@@ -25,6 +28,7 @@ public class FileTransferProducer {
     public static void sendFile(String topic, String filePath) {
         try {
             String endpoint = Constants.BROKER_ADDRESS_PORT;
+
             ClientServiceProvider provider = ClientServiceProvider.loadService();
             ClientConfigurationBuilder builder = ClientConfiguration.newBuilder().setEndpoints(endpoint);
             ClientConfiguration configuration = builder.build();
