@@ -1,5 +1,6 @@
-import java.io.IOException;
-import java.util.Collections;
+package message;
+
+import constants.Constants;
 import org.apache.rocketmq.client.apis.ClientConfiguration;
 import org.apache.rocketmq.client.apis.ClientException;
 import org.apache.rocketmq.client.apis.ClientServiceProvider;
@@ -10,16 +11,24 @@ import org.apache.rocketmq.client.apis.consumer.PushConsumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class groupDiscussConsumer {
-    private static final Logger logger = LoggerFactory.getLogger(groupDiscussConsumer.class);
+import java.io.IOException;
+import java.util.Collections;
 
-    private groupDiscussConsumer() {
+/**
+ * 接收消息（普通点对点）
+ * 消费者
+ */
+
+public class MessageConsumer {
+    private static final Logger logger = LoggerFactory.getLogger(MessageConsumer.class);
+
+    private MessageConsumer() {
     }
 
     public static void main(String[] args) throws ClientException, IOException, InterruptedException {
         final ClientServiceProvider provider = ClientServiceProvider.loadService();
         // 接入点地址，需要设置成Proxy的地址和端口列表，一般是xxx:8081;xxx:8081。
-        String endpoints = "192.168.195.136:8081";
+        String endpoints = Constants.BROKER_ADDRESS_PORT;
         ClientConfiguration clientConfiguration = ClientConfiguration.newBuilder()
                 .setEndpoints(endpoints)
                 .build();
