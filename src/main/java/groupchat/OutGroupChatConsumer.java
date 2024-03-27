@@ -23,9 +23,8 @@ import java.util.List;
  * 消费者
  */
 
-@SuppressWarnings("ALL")
-public class GroupChatConsumer {
-    private static final Logger logger = LoggerFactory.getLogger(GroupChatConsumer.class);
+public class OutGroupChatConsumer {
+    private static final Logger logger = LoggerFactory.getLogger(OutGroupChatConsumer.class);
 
     public static void main(String[] args) throws ClientException, IOException, InterruptedException, MQClientException {
         // 服务获取
@@ -34,7 +33,7 @@ public class GroupChatConsumer {
         // 配置消费者
         ClientConfig clientConfig = new ClientConfig();
         clientConfig.setNamesrvAddr(Constants.NAME_SERVER_ADDRESS_PORT);
-        Group group = new Group("10000", "TestGroup");
+        Group group = new Group("10001", "TestGroup");
         String consumerGroup = "Group_" + group.getGroupID();
 
         // 消息特征构建

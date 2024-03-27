@@ -1,7 +1,6 @@
 package groupchat;
 
 import constants.Constants;
-import template.ProducerExample;
 import org.apache.rocketmq.client.apis.ClientConfiguration;
 import org.apache.rocketmq.client.apis.ClientConfigurationBuilder;
 import org.apache.rocketmq.client.apis.ClientException;
@@ -12,44 +11,68 @@ import org.apache.rocketmq.client.apis.producer.SendReceipt;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.security.SecureRandom;
+import java.util.Random;
 
 /**
  * 进行群聊的设置
  * 使用订阅机制，应该要群发进行获得内容
  */
-public class GroupChatProducer {
-    private static final Logger logger = LoggerFactory.getLogger(ProducerExample.class);
 
-    public static void main(String[] args) throws ClientException {
-        // 接入点地址，需要设置成Proxy的地址和端口列表，一般是xxx:8081;xxx:8081。
-        String endpoint = Constants.BROKER_ADDRESS_PORT;
-        // 消息发送的目标Topic名称，需要提前创建。
-        String topic = "GroupDiscussion";
-        ClientServiceProvider provider = ClientServiceProvider.loadService();
-        ClientConfigurationBuilder builder = ClientConfiguration.newBuilder().setEndpoints(endpoint);
-        ClientConfiguration configuration = builder.build();
-        // 初始化Producer时需要设置通信配置以及预绑定的Topic。
+
+public class GroupChatProducer {
+    private static final Logger logger = LoggerFactory.getLogger(GroupChatProducer.class);
+
+    public static void main(String[] args) throws ClientException, IOException {
+        // 服务获取
+        final ClientServiceProvider provider = ClientServiceProvider.loadService();
+
+        // 配置生产者
+        ClientConfiguration clientConfig = ClientConfiguration.newBuilder()
+                .setEndpoints(Constants.BROKER_ADDRESS_PORT)
+                .build();
+
         Producer producer = provider.newProducerBuilder()
-                .setTopics(topic)
-                .setClientConfiguration(configuration)
+                .setClientConfiguration(clientConfig)
                 .build();
-        // 普通消息发送。
-        Message message = provider.newMessageBuilder()
-                .setTopic(topic)
-                // 设置消息索引键，可根据关键字精确查找某条消息。
-                .setKeys("messageKey")
-                // 设置消息Tag，用于消费端根据指定Tag过滤消息。
-                .setTag("messageTag")
-                // 消息体。
-                .setBody("messageBody".getBytes())
-                .build();
-        try {
-            // 发送消息，需要关注发送结果，并捕获失败等异常。
-            SendReceipt sendReceipt = producer.send(message);
-            logger.info("Send message successfully, messageId={}", sendReceipt.getMessageId());
-        } catch (ClientException e) {
-            logger.error("Failed to send message", e);
+
+        // 创建输入流
+        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+        String input;
+        System.out.println("输入消息：('exit' to quit):");
+        Group group = new Group("10000", "TestGroup");
+
+        while (!(input = reader.readLine()).equals("exit")) {
+            // 消息特征构建
+            String topic = group.getTopic();
+            String tag = group.getUniqueIdString();
+            Random random = new Random();
+            String msgKeys = String.format("%08d", random.nextInt(100000000));
+            byte[] msgBody = input.getBytes();
+
+            // 消息体与发送单元构建
+            Message message = provider.newMessageBuilder()
+                    .setTopic(topic)
+                    .setTag(tag)
+                    .setBody(msgBody)
+                    .setKeys(msgKeys)
+                    .build();
+
+            // 执行发送
+            try {
+                SendReceipt sendReceipt = producer.send(message);
+                logger.info("Send message successfully, messageId={}, input={}", sendReceipt.getMessageId(), input);
+            } catch (ClientException e) {
+                logger.error("Failed to send message", e);
+            }
+            System.out.println("Enter your message ('exit' to quit):");
         }
-        // producer.close();
+
+        // 关闭生产者和输入流
+        producer.close();
+        reader.close();
     }
 }
