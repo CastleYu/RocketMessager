@@ -55,7 +55,14 @@ public class GroupChatConsumer {
                     // 日志记录消息内容
                     logger.info("接收到消息(Id={}): ", messageExt.getMsgId());
                     logger.info("(Tag={}, msgKey={})\n消息内容:\n\t{}", messageExt.getTags(), messageExt.getKeys(), new String(messageExt.getBody()));
+
+                    // 调用翻译方法获取翻译结果
+                    String translatedText = YoudaoTranslator.translateAndPrint(new String(messageExt.getBody()));
+//                    logger.info("翻译结果: {}", translatedText);
+                    System.out.println("\u001B[34m翻译结果: " + translatedText + "\u001B[0m");
+
                 }
+
                 return ConsumeConcurrentlyStatus.CONSUME_SUCCESS;
             }
         });

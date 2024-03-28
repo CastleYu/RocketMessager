@@ -1,6 +1,7 @@
 package groupchat;
 
 import constants.Constants;
+import jdk.internal.util.xml.impl.Input;
 import org.apache.rocketmq.client.apis.ClientConfiguration;
 import org.apache.rocketmq.client.apis.ClientConfigurationBuilder;
 import org.apache.rocketmq.client.apis.ClientException;
@@ -21,7 +22,6 @@ import java.util.Random;
  * 进行群聊的设置
  * 使用订阅机制，应该要群发进行获得内容
  */
-
 
 public class GroupChatProducer {
     private static final Logger logger = LoggerFactory.getLogger(GroupChatProducer.class);
@@ -45,6 +45,7 @@ public class GroupChatProducer {
         System.out.println("输入消息：('exit' to quit):");
         Group group = new Group("10000", "TestGroup");
 
+
         while (!(input = reader.readLine()).equals("exit")) {
             // 消息特征构建
             String topic = group.getTopic();
@@ -61,10 +62,16 @@ public class GroupChatProducer {
                     .setKeys(msgKeys)
                     .build();
 
+
+            // 调用翻译方法获取翻译结果
+            String translatedText = YoudaoTranslator.translateAndPrint(input);
+            System.out.println("\u001B[34m翻译结果: " + translatedText + "\u001B[0m");
+
             // 执行发送
             try {
                 SendReceipt sendReceipt = producer.send(message);
                 logger.info("Send message successfully, messageId={}, input={}", sendReceipt.getMessageId(), input);
+
             } catch (ClientException e) {
                 logger.error("Failed to send message", e);
             }
