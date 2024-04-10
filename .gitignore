@@ -39,3 +39,4 @@ build/
 
 
 *test*
+/src/main/resources/config.properties
