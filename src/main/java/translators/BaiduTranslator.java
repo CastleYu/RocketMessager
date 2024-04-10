@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.parser.Feature;
+import com.sun.org.apache.bcel.internal.generic.LAND;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -32,6 +33,9 @@ public class BaiduTranslator {
         }
     }
 
+    public static String translate(String query) {
+        return translate(query, "auto", Lang.CHINESE_SIMPLIFIED);
+    }
 
     public static String translate(String query, String fromLang, String toLang) {
         try {

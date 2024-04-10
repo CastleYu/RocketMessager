@@ -12,6 +12,7 @@ import org.apache.rocketmq.common.message.MessageExt;
 import org.apache.rocketmq.common.protocol.heartbeat.MessageModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import translators.BaiduTranslator;
 import translators.YoudaoTranslator;
 
 import java.awt.*;
@@ -91,8 +92,7 @@ public class GroupChatConsumer {
         // 检查翻译结果是否已经存在于哈希表中
         String translatedText = translationCache.get(output);
         if (translatedText == null) {
-            // 如果哈希表中不存在翻译结果，则调用 API 进行翻译并存储到哈希表中
-            translatedText = YoudaoTranslator.translateAndPrint(output);
+            translatedText = BaiduTranslator.translate(output);
             translationCache.put(output, translatedText);
         }
 
