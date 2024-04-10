@@ -32,6 +32,7 @@ public class BaiduTranslator {
         }
     }
 
+
     public static String translate(String query, String fromLang, String toLang) {
         try {
             String salt = String.valueOf(new Random().nextInt(10000) + 32768);
@@ -45,6 +46,8 @@ public class BaiduTranslator {
             // 构建请求体
             String requestBody = String.format("q=%s&from=%s&to=%s&appid=%s&salt=%s&sign=%s",
                     query, fromLang, toLang, APP_ID, salt, sign);
+
+
             OutputStream outputStream = conn.getOutputStream();
             outputStream.write(requestBody.getBytes());
             outputStream.flush();
@@ -58,13 +61,12 @@ public class BaiduTranslator {
                 response.append(line);
             }
             in.close();
-            outputStream.close();
             conn.disconnect();
             // 假设返回的JSON格式非常简单，仅包含一个翻译后的文本
             String jsonResponse = response.toString();
             // 这里需要手动解析JSON字符串，这种方式仅适用于非常简单的JSON格式
 //            String translatedText = extractTranslatedText(jsonResponse);
-            System.out.println(jsonResponse);
+
             return parseResponse(jsonResponse);
             // 这里简化处理，只返回响应的字符串，实际中你可能需要解析JSON格式的响应
         } catch (Exception e) {
@@ -74,10 +76,13 @@ public class BaiduTranslator {
     }
 
     public static String parseResponse(String jsonResponse) {
-        JSONObject jsonObject = JSONObject.parseObject(jsonResponse);
-        JSONArray translationArray = jsonObject.getJSONArray("error_code");
-        String translation = translationArray.getString(0);
-        return translation;
+        try {
+            JSONObject jsonObject = JSON.parseObject(jsonResponse, Feature.AutoCloseSource, Feature.DisableSpecialKeyDetect);
+            return jsonObject.getJSONArray("trans_result").getJSONObject(0).getString("dst");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "Error parsing JSON response";
+        }
     }
 
     private static String generateSign(String query, String salt) throws Exception {
