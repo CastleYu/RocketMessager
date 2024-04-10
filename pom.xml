@@ -31,6 +31,7 @@
             <artifactId>logback-classic</artifactId>
             <version>1.2.3</version> <!-- 使用时请检查是否有更新的版本 -->
         </dependency>
+        <!--suppress VulnerableLibrariesLocal -->
         <dependency>
             <groupId>org.apache.rocketmq</groupId>
             <artifactId>rocketmq-common</artifactId>
