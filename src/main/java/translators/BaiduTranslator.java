@@ -58,12 +58,13 @@ public class BaiduTranslator {
                 response.append(line);
             }
             in.close();
+            outputStream.close();
             conn.disconnect();
             // 假设返回的JSON格式非常简单，仅包含一个翻译后的文本
             String jsonResponse = response.toString();
             // 这里需要手动解析JSON字符串，这种方式仅适用于非常简单的JSON格式
 //            String translatedText = extractTranslatedText(jsonResponse);
-
+            System.out.println(jsonResponse);
             return parseResponse(jsonResponse);
             // 这里简化处理，只返回响应的字符串，实际中你可能需要解析JSON格式的响应
         } catch (Exception e) {
@@ -73,16 +74,10 @@ public class BaiduTranslator {
     }
 
     public static String parseResponse(String jsonResponse) {
-        try {
-            // 使用安全的解析选项，例如Feature.AutoCloseSource等
-            JSONObject jsonObject = JSON.parseObject(jsonResponse, Feature.AutoCloseSource, Feature.DisableSpecialKeyDetect);
-            JSONArray translationArray = jsonObject.getJSONArray("translation");
-            return translationArray.getString(0);
-        } catch (Exception e) {
-            // 异常处理，可以根据需要记录日志或返回一个错误信息
-            e.printStackTrace();
-            return "Error parsing JSON response";
-        }
+        JSONObject jsonObject = JSONObject.parseObject(jsonResponse);
+        JSONArray translationArray = jsonObject.getJSONArray("error_code");
+        String translation = translationArray.getString(0);
+        return translation;
     }
 
     private static String generateSign(String query, String salt) throws Exception {
