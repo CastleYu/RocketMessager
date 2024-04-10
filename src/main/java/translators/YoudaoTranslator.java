@@ -1,4 +1,4 @@
-package groupchat;
+package translators;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
@@ -75,8 +75,7 @@ public class YoudaoTranslator {
 
         // 解析JSON响应并获取翻译结果
         String jsonResponse = response.toString();
-        String translatedText = parseTranslation(jsonResponse);
-        return translatedText;
+        return parseTranslation(jsonResponse);
     }
 
     public static String parseTranslation(String jsonResponse) {

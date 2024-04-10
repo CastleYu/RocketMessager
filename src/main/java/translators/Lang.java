@@ -1,4 +1,4 @@
-package groupchat;
+package translators;
 
 /**
  * 语言常量类，包含不同语言的符号常量。

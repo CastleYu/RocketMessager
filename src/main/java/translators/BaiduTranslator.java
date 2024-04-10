@@ -1,11 +1,15 @@
-package groupchat;
+package translators;
+
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.parser.Feature;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.util.Properties;
 import java.util.Random;
@@ -48,10 +52,10 @@ public class BaiduTranslator {
 
             // 获取响应
             BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-            String inputLine;
             StringBuilder response = new StringBuilder();
-            while ((inputLine = in.readLine()) != null) {
-                response.append(inputLine);
+            String line;
+            while ((line = in.readLine()) != null) {
+                response.append(line);
             }
             in.close();
             conn.disconnect();
@@ -60,7 +64,7 @@ public class BaiduTranslator {
             // 这里需要手动解析JSON字符串，这种方式仅适用于非常简单的JSON格式
 //            String translatedText = extractTranslatedText(jsonResponse);
 
-            return jsonResponse.substring(jsonResponse.indexOf(":\"") + 2, jsonResponse.lastIndexOf("\""));
+            return parseResponse(jsonResponse);
             // 这里简化处理，只返回响应的字符串，实际中你可能需要解析JSON格式的响应
         } catch (Exception e) {
             e.printStackTrace();
@@ -68,40 +72,17 @@ public class BaiduTranslator {
         }
     }
 
-    private static String extractTranslatedText(String jsonResponse) {
-        String dstKey = "\"dst\":\"";
-        int dstIndex = jsonResponse.indexOf(dstKey) + dstKey.length();
-        if (dstIndex == -1) {
-            return null; // dst关键字未找到
+    public static String parseResponse(String jsonResponse) {
+        try {
+            // 使用安全的解析选项，例如Feature.AutoCloseSource等
+            JSONObject jsonObject = JSON.parseObject(jsonResponse, Feature.AutoCloseSource, Feature.DisableSpecialKeyDetect);
+            JSONArray translationArray = jsonObject.getJSONArray("translation");
+            return translationArray.getString(0);
+        } catch (Exception e) {
+            // 异常处理，可以根据需要记录日志或返回一个错误信息
+            e.printStackTrace();
+            return "Error parsing JSON response";
         }
-
-        StringBuilder translatedText = new StringBuilder();
-        char[] chars = jsonResponse.toCharArray();
-        for (int i = dstIndex; i < chars.length; i++) {
-            if (chars[i] == '\"' && chars[i - 1] != '\\') { // 查找到结束的双引号，排除转义情况
-                break;
-            }
-            translatedText.append(chars[i]);
-        }
-
-        return unicodeToString(translatedText.toString());
-    }
-
-    /**
-     * 将Unicode编码转换为字符串
-     *
-     * @param unicode Unicode编码字符串
-     * @return 转换后的字符串
-     */
-    private static String unicodeToString(String unicode) {
-        StringBuilder string = new StringBuilder();
-        String[] hex = unicode.split("\\\\u");
-
-        for (int i = 1; i < hex.length; i++) {
-            int data = Integer.parseInt(hex[i], 16);
-            string.append((char) data);
-        }
-        return string.toString();
     }
 
     private static String generateSign(String query, String salt) throws Exception {

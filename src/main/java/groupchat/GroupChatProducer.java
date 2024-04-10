@@ -2,7 +2,6 @@ package groupchat;
 
 import constants.Constants;
 import org.apache.rocketmq.client.apis.ClientConfiguration;
-import org.apache.rocketmq.client.apis.ClientConfigurationBuilder;
 import org.apache.rocketmq.client.apis.ClientException;
 import org.apache.rocketmq.client.apis.ClientServiceProvider;
 import org.apache.rocketmq.client.apis.message.Message;
@@ -10,6 +9,7 @@ import org.apache.rocketmq.client.apis.producer.Producer;
 import org.apache.rocketmq.client.apis.producer.SendReceipt;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import translators.YoudaoTranslator;
 
 import java.awt.*;
 import java.io.BufferedReader;
@@ -17,6 +17,11 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Map;
+
+/**
+ * 进行群聊的设置
+ * 使用订阅机制，应该要群发进行获得内容
+ */
 
 public class GroupChatProducer {
     private static final Logger logger = LoggerFactory.getLogger(GroupChatProducer.class);
