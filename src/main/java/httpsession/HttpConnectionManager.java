@@ -1,18 +1,19 @@
 package httpsession;
 
-import java.io.BufferedReader;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.CookieManager;
-import java.net.HttpURLConnection;
-import java.net.URL;
+import java.io.*;
+import java.net.*;
+import java.util.List;
 import java.util.Map;
 import java.util.StringJoiner;
 
 public class HttpConnectionManager {
-    protected final CookieManager cookieManager = new CookieManager();
     protected HttpURLConnection connection;
+//    private static boolean cookieManagerSet = false;
+//    private CookieManager cookieManager;
+
+    public HttpConnectionManager() {
+//        initializeCookieManager();
+    }
 
     protected String buildQuery(String url) {
         return buildQuery(url, null);
@@ -45,15 +46,33 @@ public class HttpConnectionManager {
         }
     }
 
-    private void buildCookies(Map<String, String> cookies) {
-        if (cookies != null && !cookies.isEmpty()) {
-            StringJoiner cookieHeader = new StringJoiner("; ");
-            for (Map.Entry<String, String> cookie : cookies.entrySet()) {
-                cookieHeader.add(cookie.getKey() + "=" + cookie.getValue());
-            }
-            connection.setRequestProperty("Cookie", cookieHeader.toString());
+    protected void buildCookies(Map<String, String> cookies) {
+        if (cookies == null || cookies.isEmpty()) {
+            return;
         }
+
+        StringJoiner cookieHeader = new StringJoiner("; ");
+        for (Map.Entry<String, String> cookie : cookies.entrySet()) {
+            cookieHeader.add(cookie.getKey() + "=" + cookie.getValue());
+        }
+        connection.setRequestProperty("Cookie", cookieHeader.toString());
     }
+
+//    private void initializeCookieManager() {
+//        if (!cookieManagerSet) {
+//            cookieManager = new CookieManager();
+//            CookieHandler.setDefault(cookieManager);
+//            cookieManagerSet = true;
+//        }
+//    }
+//
+//    protected void printCookies() {
+//        CookieStore cookieStore = cookieManager.getCookieStore();
+//        List<HttpCookie> cookies = cookieStore.getCookies();
+//        for (HttpCookie cookie : cookies) {
+//            System.out.println("Cookie: " + cookie);
+//        }
+//    }
 
     protected void connect(String queryUrl) throws IOException {
         URL url = new URL(queryUrl);
@@ -61,17 +80,36 @@ public class HttpConnectionManager {
     }
 
 
-    // 处理HTTP响应
     protected String send() throws IOException {
         int responseCode = connection.getResponseCode();
         StringBuilder response = new StringBuilder();
         try (BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()))) {
             String line;
             while ((line = in.readLine()) != null) {
-                response.append(line);
+                response.append(line.trim());
             }
         }
-
+        connection.disconnect();
         return response.toString();
+    }
+
+    protected byte[] sendBin() throws IOException {
+        int responseCode = connection.getResponseCode();
+        try (InputStream in = connection.getInputStream()) {
+            ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+            int nRead;
+            byte[] data = new byte[1024];
+
+            while ((nRead = in.read(data, 0, data.length)) != -1) {
+                buffer.write(data, 0, nRead);
+            }
+            buffer.flush();
+            return buffer.toByteArray();
+        }
+    }
+
+    protected void close() throws IOException {
+        connection.disconnect();
+        connection = null;
     }
 }

@@ -1,10 +1,8 @@
 package translators;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.parser.Feature;
-import com.sun.org.apache.bcel.internal.generic.LAND;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -22,14 +20,12 @@ public class BaiduTranslator {
 
     static {
         try {
-            // 加载配置文件
             Properties props = new Properties();
             props.load(BaiduTranslator.class.getClassLoader().getResourceAsStream("config.properties"));
             APP_ID = props.getProperty("appId");
             SECRET_KEY = props.getProperty("secretKey");
         } catch (Exception e) {
             e.printStackTrace();
-            // 处理错误或提供默认值
         }
     }
 
@@ -66,13 +62,9 @@ public class BaiduTranslator {
             }
             in.close();
             conn.disconnect();
-            // 假设返回的JSON格式非常简单，仅包含一个翻译后的文本
             String jsonResponse = response.toString();
-            // 这里需要手动解析JSON字符串，这种方式仅适用于非常简单的JSON格式
-//            String translatedText = extractTranslatedText(jsonResponse);
 
             return parseResponse(jsonResponse);
-            // 这里简化处理，只返回响应的字符串，实际中你可能需要解析JSON格式的响应
         } catch (Exception e) {
             e.printStackTrace();
             return null; // 或处理错误
@@ -103,7 +95,7 @@ public class BaiduTranslator {
 
     public static void main(String[] args) {
         String result = translate("Hello, world!", "en", "zh");
-        System.out.println(result); // 打印翻译结果
+        System.out.println(result);
     }
 }
 
